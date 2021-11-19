@@ -76,6 +76,13 @@ var BuildVersion string = "0.1.0"
 
 // get TMDB data for show
 func showData(id string, season string) TVShow {
+	// get TMDB API key
+	envPath := os.Getenv("GOPATH") + "/.env"
+	err := godotenv.Load(envPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// get the show data
 	key := os.Getenv("TMDB_KEY")
 	if key == "" {
@@ -162,7 +169,7 @@ func mediaTitle(episode EpisodeNames) {
 		log.Println(err)
 	}
 
-    // add file metadata
+	// add file metadata
 	cmd := "mkvproedit" + path + "/" + episode.NewFilename + "-e info -s title=" + episode.Name
 	err = exec.Command(cmd).Run()
 	if err != nil {
@@ -172,12 +179,6 @@ func mediaTitle(episode EpisodeNames) {
 
 func main() {
 	// get arguments
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-    // parse arguments
 	showNamePtr := flag.String("showName", "", "Show name")
 	showIDPtr := flag.String("showID", "", "TMDB Show ID")
 	seasonPtr := flag.String("season", "", "Show seaon")
