@@ -4,7 +4,7 @@ VERSION := 0.1.0
 
 run: showrunner.go go.mod
 	chmod +x showrunner.go
-	cd "$GOPATH" && go get github.com/erning/gorun
+	cd "${GOPATH}" && go install github.com/erning/gorun@latest
 
 # https://golang.org/cmd/link/
 build: showrunner.go go.mod
