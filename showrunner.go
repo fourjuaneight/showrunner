@@ -189,11 +189,11 @@ func main() {
 
 	switch true {
 	case *showNamePtr == "":
-		log.Fatalln("Please provide a show name")
+		log.Fatalln("Please provide a show name (-showName).")
 	case *showIDPtr == "":
-		log.Fatalln("Please provide a show ID")
+		log.Fatalln("Please provide a show ID (-showID).")
 	case *seasonPtr == "":
-		log.Fatalln("Please provide a season number")
+		log.Fatalln("Please provide a season number (-season).")
 	default:
 		newData := episodeNames(show, *showNamePtr)
 
