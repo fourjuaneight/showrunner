@@ -162,6 +162,7 @@ func mediaTitle(episode EpisodeNames) {
 		log.Println(err)
 	}
 
+    // add file metadata
 	cmd := "mkvproedit" + path + "/" + episode.NewFilename + "-e info -s title=" + episode.Name
 	err = exec.Command(cmd).Run()
 	if err != nil {
@@ -176,6 +177,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+    // parse arguments
 	showNamePtr := flag.String("showName", "", "Show name")
 	showIDPtr := flag.String("showID", "", "TMDB Show ID")
 	seasonPtr := flag.String("season", "", "Show seaon")
