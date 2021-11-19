@@ -160,8 +160,8 @@ func renameFile(episode EpisodeNames) {
 }
 
 // add media title to filename
-func mediaTitle(episode EpisodeNames) {
-	log.Println("[mkvproedit]: title = " + episode.Name)
+func setMediaTitle(episode EpisodeNames) {
+	log.Println("[mkvpropedit]: title = " + episode.Name)
 
 	// get current direcotry
 	path, err := os.Getwd()
@@ -170,8 +170,7 @@ func mediaTitle(episode EpisodeNames) {
 	}
 
 	// add file metadata
-	cmd := "mkvproedit" + path + "/" + episode.NewFilename + "-e info -s title=" + episode.Name
-	err = exec.Command(cmd).Run()
+	err = exec.Command("mkvpropedit", path+"/"+episode.NewFilename, "-e", "info", "-s", "title="+episode.Name).Run()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -199,8 +198,8 @@ func main() {
 		newData := episodeNames(show, *showNamePtr)
 
 		for i := 0; i < len(newData); i++ {
+			setMediaTitle(newData[i])
 			renameFile(newData[i])
-			mediaTitle(newData[i])
 		}
 	}
 }
