@@ -170,10 +170,17 @@ func setMediaTitle(episode EpisodeNames) {
 	}
 
 	// add file metadata
-	err = exec.Command("mkvpropedit", path+"/"+episode.NewFilename, "-e", "info", "-s", "title="+episode.Name).Run()
+	filepath := path + "/" + episode.CurrentFilename
+	title := "title=" + episode.Name
+
+	cmd := exec.Command("mkvpropedit", filepath, "-e", "info", "-s", title)
+
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
+
+	log.Println("[mkvpropedit]:", string(out))
 }
 
 func main() {
