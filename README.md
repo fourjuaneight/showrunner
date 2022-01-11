@@ -1,6 +1,6 @@
 # Showrunner
 
-A simple utility to get TV Show data from TMDB and use episode titles to rename media file (based on a specific naming convention) and add metadata.
+A simple utility to get TV Show data from TMDB and use episode titles to rename media files (based on a specific naming convention) and add metadata.
 
 This is mostly for personal use, but PRs are welcomed.
 
@@ -17,7 +17,7 @@ make run
 ### Local Binary
 ```sh
 make build
-# binary should be accessible from root of repo
+# binary should be accessible from the root of the repo
 ./showrunner
 ```
 
