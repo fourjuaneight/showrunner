@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 )
 
@@ -80,24 +81,28 @@ func showData(id string, season string) TVShow {
 	envPath := os.Getenv("GOPATH") + "/.env"
 	err := godotenv.Load(envPath)
 	if err != nil {
+		log.Print(color.RedString("[Error (godotenv.Load)]:"))
 		log.Fatal(err)
 	}
 
 	// get the show data
 	key := os.Getenv("TMDB_KEY")
 	if key == "" {
+		log.Print(color.RedString("[Error (os.Getenv)]:"))
 		log.Fatalln("Please provide a TMDB API key")
 	}
 
 	url := "https://api.themoviedb.org/3/tv/" + id + "/season/" + season + "?api_key=" + key
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Print(color.RedString("[Error (http.Get)]:"))
 		log.Fatal(err)
 	}
 
 	// read the response
 	rest, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Print(color.RedString("[Error (ioutil.ReadAll)]:"))
 		log.Fatal(err)
 	}
 
@@ -105,6 +110,7 @@ func showData(id string, season string) TVShow {
 	var show TVShow
 	err = json.Unmarshal(rest, &show)
 	if err != nil {
+		log.Print(color.RedString("[Error (json.Unmarshal)]:"))
 		log.Fatal(err)
 	}
 
@@ -156,23 +162,25 @@ func episodeNames(data TVShow, showName string) []EpisodeNames {
 
 // rename file with episode name
 func renameFile(episode EpisodeNames) {
-	log.Println("[Rename]:" + episode.CurrentFilename + " -> " + episode.NewFilename)
+	log.Println(color.YellowString("[Rename]: ") + episode.CurrentFilename + " -> " + episode.NewFilename)
 
 	// rename the file
 	err := os.Rename(episode.CurrentFilename, episode.NewFilename)
 	if err != nil {
+		log.Print(color.RedString("[Error (os.Rename)]:"))
 		log.Fatal(err)
 	}
 }
 
 // add media title to filename
 func setMediaTitle(episode EpisodeNames) {
-	log.Println("[mkvpropedit]: title = " + episode.Name)
+	log.Println(color.YellowString("[mkvpropedit]: ") + "title = " + episode.Name)
 
 	// get current direcotry
 	path, err := os.Getwd()
 	if err != nil {
-		log.Println(err)
+		log.Print(color.RedString("[Error (os.Getwd)]:"))
+		log.Fatal(err)
 	}
 
 	// add file metadata
@@ -183,10 +191,11 @@ func setMediaTitle(episode EpisodeNames) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println(err)
+		log.Print(color.RedString("[Error (cmd.CombinedOutput)]:"))
+		log.Fatal(err)
 	}
 
-	log.Println("[mkvpropedit]:", string(out))
+	log.Println(color.YellowString("[mkvpropedit]: "), string(out))
 }
 
 func main() {
@@ -200,13 +209,19 @@ func main() {
 	// get the show data
 	show := showData(*showIDPtr, *seasonPtr)
 
+	// help message
+	helpMsg := color.YellowString("Ensure filenames are formatted correctly:\n") + "Show_Name-S01-E01-.mkv\n\n" + color.YellowString("Arguments:\n") +
+		"-showName	show name\n-showID  	TMDB show ID\n-season  	season number"
+
 	switch true {
+	case *showNamePtr == "" && *showIDPtr == "" && *seasonPtr == "":
+		println(helpMsg)
 	case *showNamePtr == "":
-		log.Fatalln("Please provide a show name (-showName).")
+		println("Please provide a show name (" + color.YellowString("-showName") + ").")
 	case *showIDPtr == "":
-		log.Fatalln("Please provide a show ID (-showID).")
+		println("Please provide a show ID (" + color.YellowString("-showID") + ").")
 	case *seasonPtr == "":
-		log.Fatalln("Please provide a season number (-season).")
+		println("Please provide a season number (" + color.YellowString("-season") + ").")
 	default:
 		newData := episodeNames(show, *showNamePtr)
 
