@@ -130,12 +130,15 @@ func episodeNames(data TVShow, showName string) []EpisodeNames {
 		partPat := regexp.MustCompile(`Part\s([0-9]+):\s`)
 		name := partPat.ReplaceAllString(episode.Name, `Part $1 - `)
 		// remove symbols and replace spaces with dashes
-		symbolPat := regexp.MustCompile(`[,:]`)
+		symbolPat := regexp.MustCompile(`[,:!@#$%^&*()_+{}|\[\]~;'<>?/]`)
 		spacePat := regexp.MustCompile(`\s`)
 		dashPat := regexp.MustCompile(`\s-\s`)
+		doubleDashPat := regexp.MustCompile(`\s--\s`)
 		fmtPart := partPat.ReplaceAllString(episode.Name, `-Part_$1-`)
 		fmtSymbols := symbolPat.ReplaceAllString(fmtPart, ``)
-		fmtName := spacePat.ReplaceAllString(fmtSymbols, `_`)
+		fmtName2 := spacePat.ReplaceAllString(fmtSymbols, `_`)
+		fmtName1 := dashPat.ReplaceAllString(fmtName2, `-`)
+		fmtName := doubleDashPat.ReplaceAllString(fmtName1, `-`)
 		// generate new filename
 		cleanName := spacePat.ReplaceAllString(showName, `_`)
 		cleanerName := dashPat.ReplaceAllString(cleanName, `-`)
