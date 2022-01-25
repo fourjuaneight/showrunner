@@ -81,28 +81,28 @@ func showData(id string, season string) TVShow {
 	envPath := os.Getenv("GOPATH") + "/.env"
 	err := godotenv.Load(envPath)
 	if err != nil {
-		log.Print(color.RedString("[Error (godotenv.Load)]:"))
+		println(color.RedString("[Error (godotenv.Load)]:"))
 		log.Fatal(err)
 	}
 
 	// get the show data
 	key := os.Getenv("TMDB_KEY")
 	if key == "" {
-		log.Print(color.RedString("[Error (os.Getenv)]:"))
+		println(color.RedString("[Error (os.Getenv)]:"))
 		log.Fatalln("Please provide a TMDB API key")
 	}
 
 	url := "https://api.themoviedb.org/3/tv/" + id + "/season/" + season + "?api_key=" + key
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Print(color.RedString("[Error (http.Get)]:"))
+		println(color.RedString("[Error (http.Get)]:"))
 		log.Fatal(err)
 	}
 
 	// read the response
 	rest, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Print(color.RedString("[Error (ioutil.ReadAll)]:"))
+		println(color.RedString("[Error (ioutil.ReadAll)]:"))
 		log.Fatal(err)
 	}
 
@@ -110,7 +110,7 @@ func showData(id string, season string) TVShow {
 	var show TVShow
 	err = json.Unmarshal(rest, &show)
 	if err != nil {
-		log.Print(color.RedString("[Error (json.Unmarshal)]:"))
+		println(color.RedString("[Error (json.Unmarshal)]:"))
 		log.Fatal(err)
 	}
 
@@ -167,7 +167,7 @@ func renameFile(episode EpisodeNames) {
 	// rename the file
 	err := os.Rename(episode.CurrentFilename, episode.NewFilename)
 	if err != nil {
-		log.Print(color.RedString("[Error (os.Rename)]:"))
+		println(color.RedString("[Error (os.Rename)]:"))
 		log.Fatal(err)
 	}
 }
@@ -179,7 +179,7 @@ func setMediaTitle(episode EpisodeNames) {
 	// get current direcotry
 	path, err := os.Getwd()
 	if err != nil {
-		log.Print(color.RedString("[Error (os.Getwd)]:"))
+		println(color.RedString("[Error (os.Getwd)]:"))
 		log.Fatal(err)
 	}
 
@@ -191,7 +191,7 @@ func setMediaTitle(episode EpisodeNames) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Print(color.RedString("[Error (cmd.CombinedOutput)]:"))
+		println(color.RedString("[Error (cmd.CombinedOutput)]:"))
 		log.Fatal(err)
 	}
 
