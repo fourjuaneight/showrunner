@@ -148,12 +148,12 @@ func episodeNames(data TVShow, showName string) []EpisodeNames {
 		// generate new filename
 		cleanName := spacePat.ReplaceAllString(showName, `_`)
 		cleanerName := dashPat.ReplaceAllString(cleanName, `-`)
-		file := cleanerName + "-S" + addZero(data.SeasonNumber) + "-E" + addZero(episode.EpisodeNumber) + "-"
+		file := cleanerName + "-S" + addZero(data.SeasonNumber) + "-E" + addZero(episode.EpisodeNumber)
 
 		episodeName = append(episodeName, EpisodeNames{
 			Name:            name,
 			CurrentFilename: file + ".mkv",
-			NewFilename:     file + fmtName + ".mkv",
+			NewFilename:     file + "-" + fmtName + ".mkv",
 		})
 	}
 
@@ -185,7 +185,7 @@ func setMediaTitle(episode EpisodeNames) {
 
 	// add file metadata
 	filepath := path + "/" + episode.CurrentFilename
-	title := "title=" + episode.Name
+	title := "title=" + "\"" + episode.Name + "\""
 
 	cmd := exec.Command("mkvpropedit", filepath, "-e", "info", "-s", title)
 
