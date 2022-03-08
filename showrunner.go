@@ -137,7 +137,7 @@ func episodeNames(data TVShow, showName string) []EpisodeNames {
 		name := partPat.ReplaceAllString(episode.Name, `Part $1 - `)
 		// remove symbols and replace spaces with dashes
 		symbolPat := regexp.MustCompile(`[,:!@#$%^&*()_+{}|\[\]~;'<>?/]`)
-		spacePat := regexp.MustCompile(`\s`)
+		spacePat := regexp.MustCompile(`\s+`)
 		spaceDotPat := regexp.MustCompile(`\.\s`)
 		dashPat := regexp.MustCompile(`\s-\s`)
 		doubleDashPat := regexp.MustCompile(`\s--\s`)
