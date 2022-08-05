@@ -132,21 +132,18 @@ func episodeNames(data TVShow, showName string) []EpisodeNames {
 
 	for i := 0; i < len(data.Episodes); i++ {
 		episode := data.Episodes[i]
-		// clean names with parts
+		// setup match patterns
 		partPat := regexp.MustCompile(`Part\s([0-9]+):\s`)
+		spacePat := regexp.MustCompile(`\s+`)
+		dashPat := regexp.MustCompile(`\s-\s`)
+		// clean names with parts
 		name := partPat.ReplaceAllString(episode.Name, `Part $1 - `)
 		// remove symbols and replace spaces with dashes
-		symbolPat := regexp.MustCompile(`[,:!@#$%^&*()_+{}|\[\]~;'<>?/]`)
-		spacePat := regexp.MustCompile(`\s+`)
-		spaceDotPat := regexp.MustCompile(`\.\s`)
-		dashPat := regexp.MustCompile(`\s-\s`)
-		doubleDashPat := regexp.MustCompile(`\s--\s`)
-		ellipsisPat := regexp.MustCompile(`\.+`)
 		fmtPart := partPat.ReplaceAllString(episode.Name, `-Part_$1-`)
-		fmtSymbols := symbolPat.ReplaceAllString(fmtPart, ``)
-		fmtName4 := ellipsisPat.ReplaceAllString(fmtSymbols, ``)
-		fmtName3 := doubleDashPat.ReplaceAllString(fmtName4, `-`)
-		fmtName2 := spaceDotPat.ReplaceAllString(fmtName3, `_`)
+		fmtSymbols := regexp.MustCompile(`[,:!@#$%^&*()_+{}|\[\]~;’‘'”“"<>?/]`).ReplaceAllString(fmtPart, ``)
+		fmtName4 := regexp.MustCompile(`\.{3}`).ReplaceAllString(fmtSymbols, ``)
+		fmtName3 := regexp.MustCompile(`\s--\s`).ReplaceAllString(fmtName4, `-`)
+		fmtName2 := regexp.MustCompile(`\.\s`).ReplaceAllString(fmtName3, `_`)
 		fmtName1 := dashPat.ReplaceAllString(fmtName2, `-`)
 		fmtName := spacePat.ReplaceAllString(fmtName1, `_`)
 		// generate new filename
