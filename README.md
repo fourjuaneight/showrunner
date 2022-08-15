@@ -2,7 +2,7 @@
 
 A simple utility to get TV Show data from TMDB and use episode titles to rename media files (based on a specific naming convention) and add metadata.
 
-This is mostly for personal use, but PRs are welcomed.
+For help on how to use the app, you can run `showrunner -h`.
 
 ## Usage
 There are 3 ways to run the script:
