@@ -5,7 +5,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -100,9 +100,9 @@ func showData(id string, season string) TVShow {
 	}
 
 	// read the response
-	rest, err := ioutil.ReadAll(resp.Body)
+	rest, err := io.ReadAll(resp.Body)
 	if err != nil {
-		println(color.RedString("[Error (ioutil.ReadAll)]:"))
+		println(color.RedString("[Error (io.ReadAll)]:"))
 		log.Fatal(err)
 	}
 
