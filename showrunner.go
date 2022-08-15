@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"io"
 	"log"
 	"net/http"
@@ -15,6 +14,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/joho/godotenv"
+	"github.com/urfave/cli/v2"
 )
 
 type Episodes struct {
@@ -73,7 +73,7 @@ type EpisodeNames struct {
 	NewFilename     string `json:"newFilename"`
 }
 
-var BuildVersion string = "0.1.0"
+var BuildVersion string = "1.0.0"
 
 // get TMDB data for show
 func showData(id string, season string) TVShow {
@@ -199,36 +199,84 @@ func setMediaTitle(episode EpisodeNames) {
 	log.Println(color.YellowString("[mkvpropedit]: "), string(out))
 }
 
-func main() {
-	// get arguments
-	showNamePtr := flag.String("showName", "", "Show name")
-	showIDPtr := flag.String("showID", "", "TMDB Show ID")
-	seasonPtr := flag.String("season", "", "Show seaon")
-
-	flag.Parse()
-
+func addMetadata(showName string, season string, showID string) {
 	// get the show data
-	show := showData(*showIDPtr, *seasonPtr)
+	show := showData(showID, season)
+	newData := episodeNames(show, showName)
 
-	// help message
-	helpMsg := color.YellowString("Ensure filenames are formatted correctly:\n") + "Show_Name-S01-E01-.mkv\n\n" + color.YellowString("Arguments:\n") +
-		"-showName	show name\n-showID  	TMDB show ID\n-season  	season number"
+	// add metadata to files
+	for i := 0; i < len(newData); i++ {
+		setMediaTitle(newData[i])
+		renameFile(newData[i])
+	}
+}
 
-	switch true {
-	case *showNamePtr == "" && *showIDPtr == "" && *seasonPtr == "":
-		println(helpMsg)
-	case *showNamePtr == "":
-		println("Please provide a show name (" + color.YellowString("-showName") + ").")
-	case *showIDPtr == "":
-		println("Please provide a show ID (" + color.YellowString("-showID") + ").")
-	case *seasonPtr == "":
-		println("Please provide a season number (" + color.YellowString("-season") + ").")
-	default:
-		newData := episodeNames(show, *showNamePtr)
+func main() {
+	var showName string
+	var season string
+	var showID string
 
-		for i := 0; i < len(newData); i++ {
-			setMediaTitle(newData[i])
-			renameFile(newData[i])
-		}
+	// versioning
+	cli.VersionFlag = &cli.BoolFlag{
+		Name:    "version",
+		Aliases: []string{"v"},
+		Usage:   "print app version",
+	}
+
+	// help
+	cli.AppHelpTemplate = `NAME:
+	{{.Name}} - {{.Usage}}
+
+VERSION:
+	{{.Version}}
+
+USAGE:
+	{{.HelpName}} [optional options]
+
+OPTIONS:
+{{range .VisibleFlags}}	{{.}}{{ "\n" }}{{end}}	
+	`
+	cli.HelpFlag = &cli.BoolFlag{
+		Name:    "help",
+		Aliases: []string{"h"},
+		Usage:   "show help",
+	}
+
+	// execute app
+	app := &cli.App{
+		Name:    "showrunner",
+		Usage:   "Add episode metadata to shows from TMDB",
+		Version: BuildVersion,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "showName",
+				Aliases:     []string{"n"},
+				Usage:       "show name (spaces are allowed)",
+				Destination: &showName,
+				Required:    true,
+			},
+			&cli.StringFlag{
+				Name:        "season",
+				Aliases:     []string{"s"},
+				Usage:       "show seaon",
+				Destination: &season,
+				Required:    true,
+			},
+			&cli.StringFlag{
+				Name:        "showID",
+				Aliases:     []string{"i"},
+				Usage:       "TMDB show id",
+				Destination: &showID,
+				Required:    true,
+			},
+		},
+		Action: func(*cli.Context) error {
+			addMetadata(showName, season, showID)
+			return nil
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
