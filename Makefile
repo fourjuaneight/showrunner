@@ -13,4 +13,4 @@ build: showrunner.go go.mod
 
 install: showrunner.go go.mod
 	go install ./showrunner.go
-	cp .env ${GOPATH}/.env
+	cp .env ${GOPATH}/.env.showrunner

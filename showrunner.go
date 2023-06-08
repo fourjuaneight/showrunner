@@ -78,7 +78,7 @@ var BuildVersion string = "1.0.0"
 // get TMDB data for show
 func showData(id string, season string) TVShow {
 	// get TMDB API key
-	envPath := os.Getenv("GOPATH") + "/.env"
+	envPath := os.Getenv("GOPATH") + "/.env.showrunner"
 	err := godotenv.Load(envPath)
 	if err != nil {
 		println(color.RedString("[Error (godotenv.Load)]:"))
